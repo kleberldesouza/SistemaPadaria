@@ -1,0 +1,1994 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Sistema_Negocios_Padaria
+{
+    class Program
+    {
+        static public string[,] bancodedadosClientes = new string[10, 5];
+        static public string[,,] bancodedadosProdutos = new string[3, 5, 5];
+        static public string[,] bancodedadosUsuarios = new string[6, 2];
+        static public string[,] bancodedadosVendas = new string[200, 7];
+        static public string[,] bancodedadosRelatorioVendas = new string[200, 4];
+        static int numerodeusuarios = 1, numerodeclientes = 5, indiceSalvarItemVenda = 0, idVendas = 1, indiceVendas = 0, indiceusuario;
+        static public string senhamestra = "642531-desen-snp-libera";
+
+        public void TituloSistema()
+        {
+            Console.Clear();
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|         SISTEMA DE NEGÓCIOS PARA PADARIAS       |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+        }
+
+        public void TituloPadaria()
+        {
+            Console.WriteLine("|               PADARIA MILLI PANINI              |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+        }
+
+        public void TituloAjuda()
+        {
+            Console.WriteLine("|                      AJUDA                      |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+        }
+
+        public void MostrarOpçãoInválida()
+        {
+            Console.Clear();
+            Console.WriteLine("\n\n\n---------------------------");
+            Console.WriteLine("|     OPÇÃO INVÁLIDA      |");
+            Console.WriteLine("---------------------------");
+            System.Threading.Thread.Sleep(2000);
+        }
+
+        public void MenuLogin()
+        {
+            ConsoleKeyInfo Lertecla;
+            do
+            {
+                TituloSistema();
+                TituloPadaria();
+                Console.WriteLine("|                   MENU LOGIN                    |");
+                Console.WriteLine("|                                                 |");
+                Console.WriteLine("|=================================================|");
+                Console.WriteLine("|            [F1]  AJUDA                          |");
+                Console.WriteLine("|=================================================|");
+                Console.WriteLine("|            [F2] CADASTRO DE VENDEDORES          |");
+                Console.WriteLine("|=================================================|");
+                Console.WriteLine("|            [F3] ENTRAR NO SISTEMA               |");
+                Console.WriteLine("|=================================================|");
+                Console.WriteLine("|            [F12] SAIR                           |");
+                Console.WriteLine("|=================================================|");
+                Lertecla = Console.ReadKey();
+                switch (Lertecla.Key)
+                {
+                    case ConsoleKey.F1:
+                        {
+                            AjudaMenuLogin();
+                            break;
+                        }
+                    case ConsoleKey.F2:
+                        {
+                            if (numerodeusuarios <= 5)
+                            {
+                                bancodedadosUsuarios = CadastrodeVendedores();//Cadastro de novo vendedores;
+                                numerodeusuarios++;//contador para chegar no limite de 5 vendedores
+                            }
+                            else
+                            {
+                                Console.WriteLine("Você não pode cadastrar mais vendedores!");
+                                System.Threading.Thread.Sleep(2000);
+                            }
+                            break;
+                        }
+                    case ConsoleKey.F3:
+                        {
+                            Acesso();//Acesso ao sistema, entrada de código e senha para verificação;
+                            break;
+                        }
+                    case ConsoleKey.F12://Finaliza o Sistema
+                        {
+                            Finalizacao();
+                            break;
+                        }
+                    default:
+                        {
+                            MostrarOpçãoInválida();
+                            break;
+                        }
+                }
+            } while (Lertecla.Key != ConsoleKey.F12);
+        }
+
+        public void AjudaMenuLogin()
+        {
+            ConsoleKeyInfo escolha;
+            TituloSistema();
+            TituloPadaria();
+            TituloAjuda();
+            Console.WriteLine("|            [F2] CADASTRO DE VENDEDORES          |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|            [F3] ENTRAR NO SISTEMA               |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|            [ESC] VOLTAR                         |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("\n");
+            escolha = Console.ReadKey();
+            switch (escolha.Key)
+            {
+                case ConsoleKey.F2:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("CADASTRO DE VENDEDORES:\nOpção para habilitar cada vendedor a acessar o Sistema:\nObservação: o Sistema cadastra somente cinco(5) vendedores.");
+                        Console.WriteLine("o vendedor não cadastrado irá preencher seu código de acesso(texto livre) e aperta a tecla[ENTER];\n- será requerido ao vendedor que digite uma senha de acesso(texto livre) e aperta a tecla[ENTER];");
+                        Console.WriteLine("\n-deste modo, a aplicação retornará à Tela Inicial de Login, para que possa ser feito um novo cadastro,\nou acesso ao sistema utilizando \n- se o cadastro realizado,");
+                        Console.ReadKey();
+                        MenuLogin();
+                        break;
+                    }
+                case ConsoleKey.F3:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("ENTAR NO SISTEMA:\nOpção para entrar no Sistema por meio de acesso do vendedor:\n-o vendedor deverá digitar o código de acesso cadastrado e apertar[ENTER];\n-caso ocorra um erro na digitação do código, o vendedor será informado do erro e será novamente pedido:");
+                        Console.WriteLine("que digite seu código novamente; obs.: a aplicação somente avançará se o vendedor digitar corretamente seu código ou retornar(tecla[ESC]) e realizar novo cadastro; ");
+                        Console.WriteLine("digitado corretamente o código de acesso, o sistema pedirá ao vendedor que digite a senha cadastrada, devendo o vendedor apertar a tecla[ENTER] após digitar a senha; ");
+                        Console.WriteLine("caso ocorra um erro na digitação da senha, o vendedor será informado do erro e será novamente pedido que digite sua senha novamente;\n obs.: a aplicação somente aceitará que o vendedor digite");
+                        Console.WriteLine("sua senha corretamente por três(3) vezes;\ncaso digite por três (3) a senha com erro a aplicação o informará sobre o ocorrido e pedirá para realizar novo cadastro da senha, retornando ao Menu inicial de Login");
+                        Console.WriteLine("\n-caso o vendedor digite o código e senha corretamente, o sistema será iniciado com o Acesso Permitido, e será apresentado o Menu Principal da Aplicação.");
+                        Console.ReadKey();
+                        MenuLogin();
+                        break;
+                    }
+                case ConsoleKey.Escape:
+                    {
+                        Console.Clear();
+                        MenuLogin();
+                        break;
+                    }
+                default:
+                    {
+                        MostrarOpçãoInválida();
+                        MenuPrincipal();
+                        break;
+
+                    }
+            }
+        }
+
+        public string[,] CadastrodeVendedores()
+        {
+            string[,] cadastrodeusuario = new string[6, 2];//Range dos vendedores = bancodedadosUsuarios[6,2]
+            Console.Clear();
+            cadastrodeusuario = bancodedadosUsuarios;
+            Console.WriteLine("CADASTRO DE VENDEDORES");
+            Console.Write("Cadastre um código de acesso (login): ");
+            cadastrodeusuario[numerodeusuarios, 0] = Console.ReadLine();//numerodeusuarios para relacionar com o número de vendedores;
+            Console.Write("Cadastre uma senha para acesso: ");
+            cadastrodeusuario[numerodeusuarios, 1] = Console.ReadLine();
+            Console.WriteLine("\nCadastro realizado com sucesso!");
+            System.Threading.Thread.Sleep(2000);
+            return cadastrodeusuario;
+        }
+
+        public void TenteNovamente()
+        {
+            ConsoleKeyInfo Lertecla;
+            Console.WriteLine("\n\n-------------------------------------------------------------");
+            Console.WriteLine("Tente novamente (aperte [ENTER]) ou volte ao Menu Principal(aperte [ESC]).");
+            Lertecla = Console.ReadKey();
+            Console.Clear();
+            if (Lertecla.Key == ConsoleKey.Escape)
+            {
+                MenuLogin();
+            }
+            else
+            {
+                System.Threading.Thread.Sleep(1000);
+            }
+        }
+
+        public void Acesso()
+        {
+            string[] acessodeusuario = new string[2];//variavel auxiliar para testar o usuario;
+            int contsenha = 0;//contadores para verificar 3 vezes a senha do usuário;
+            Console.Clear();
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("ACESSO DE VENDEDORES");
+                Console.Write("Digite seu código de vendedor para o acesso: ");//vendedor preenche o codigo cadastrado
+                acessodeusuario[0] = Console.ReadLine();
+                bool verificacaodecodigo = BuscaLogin(acessodeusuario[0]);//Verificação;
+                if (verificacaodecodigo == true)
+                {
+                    bool verificacaodesenha;
+                    do
+                    {
+                        Console.Write("Digite uma senha para o acesso: ");//vendedor preenche o senha cadastrado
+                        acessodeusuario[1] = Console.ReadLine();
+                        verificacaodesenha = BuscaSenha(indiceusuario, acessodeusuario[1]);//Verificação;
+                        if (verificacaodesenha == true)
+                        {
+                            Console.WriteLine("\nAcesso permitido!");//OK
+                            System.Threading.Thread.Sleep(2000);
+                            MenuPrincipal();
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nSenha inválida!");
+                            contsenha++;//contador para 3 verificações;
+                            Console.WriteLine("Você possui mais {0} tentativas", 3 - contsenha);
+                            System.Threading.Thread.Sleep(2000);
+                        }
+                    } while (contsenha < 3 && verificacaodesenha != true);
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Código de vendedor inválido!");
+                    System.Threading.Thread.Sleep(1000);
+                    TenteNovamente();
+                }
+            } while (contsenha < 3);
+            if (contsenha >= 3)
+            {
+                Console.WriteLine("Senha digitada com erro por 3 vezes!");
+                Console.WriteLine("------------------------------------");
+                Console.WriteLine("\nFaça o cadastro de nova senha.");//Talvez fazer a recuperação da senha por pergunta secreta???
+                System.Threading.Thread.Sleep(2000);
+                Novasenhadeusuario(indiceusuario);
+            }
+            MenuLogin();
+        }
+
+        public bool BuscaLogin(string pUsuário)
+        {
+            bool saidaboleana = false;
+            int variaveldepesquisa = 0;
+            string variavelparareceberoparametro = pUsuário;
+            do
+            {
+                if (variavelparareceberoparametro == bancodedadosUsuarios[variaveldepesquisa, 0])
+                {
+                    saidaboleana = true;
+                    indiceusuario = variaveldepesquisa;
+                }
+                else
+                {
+                    variaveldepesquisa++;
+                }
+            } while (variaveldepesquisa < 6 && saidaboleana != true);
+            return saidaboleana;
+        }//Verificação de existência do código do vendedor. 
+
+        public bool BuscaSenha(int pUsuario, string pSenha)
+        {
+            bool saidaboleana = false;
+            string variavelparareceberoparametro = pSenha;
+            if (variavelparareceberoparametro == bancodedadosUsuarios[pUsuario, 1])
+            {
+                saidaboleana = true;
+            }
+            else
+            {
+                saidaboleana = false;
+            }
+            return saidaboleana;
+        }//Verificação de existência do senha do vendedor;
+
+        public void Novasenhadeusuario(int pIndice)
+        {
+            Console.Clear();
+            TituloSistema();
+            TituloPadaria();
+            Console.WriteLine("Para cadastrar uma nova senha, digite a senha mestre de acesso!");
+            Console.WriteLine("Caso não se lembre da senha, consulte o Manual ou ligue para a");
+            Console.WriteLine("Assistência: (31) 3335-2972");
+            Console.Write("Digite a senha mestra: ");
+            string verdeteste = Console.ReadLine();
+            if (verdeteste == senhamestra)
+            {
+                Console.Write("Digite uma senha para o cadastro: ");
+                bancodedadosUsuarios[indiceusuario, 1] = Console.ReadLine();
+            }
+            else
+            {
+                TenteNovamente();
+                Novasenhadeusuario(pIndice);
+            }
+        }//Método para cadastro de nova senha.
+
+        public void MenuPrincipal()
+        {
+            TituloSistema();
+            TituloPadaria();
+            Console.WriteLine("|                  MENU PRINCIPAL                 |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                   [F1]  AJUDA                   |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                   [F2] CLIENTES                 |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                   [F3] PRODUTOS                 |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                   [F4] VENDAS                   |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                   [F12] Sair                    |");
+            Console.WriteLine("|=================================================|");
+            ConsoleKeyInfo Lertecla;
+            do
+            {
+                Lertecla = Console.ReadKey();
+                switch (Lertecla.Key)
+                {
+                    case ConsoleKey.F1:
+                        {
+                            AjudaMenuPrincipal();
+                            break;
+                        }
+                    case ConsoleKey.F2:
+                        {
+                            submenu1_Clientes();
+                            break;
+                        }
+                    case ConsoleKey.F3:
+                        {
+                            submenu2_Produtos();
+                            break;
+                        }
+                    case ConsoleKey.F4:
+                        {
+                            submenu3_Vendas();
+                            break;
+                        }
+                    case ConsoleKey.F12:
+                        {
+                            Finalizacao();
+                            break;
+                        }
+                    default:
+                        {
+                            MostrarOpçãoInválida();
+                            MenuPrincipal();
+                            break;
+                        }
+                }
+            } while (Lertecla.Key != ConsoleKey.F12);
+
+        }
+
+        public void AjudaMenuPrincipal()
+        {
+            ConsoleKeyInfo escolha;
+            TituloSistema();
+            TituloPadaria();
+            TituloAjuda();
+            Console.WriteLine("|                 [F2] CLIENTES                   |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                 [F3] PRODUTOS                   |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                 [F4] VENDAS                     |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|                 [ESC] VOLTAR                    |");
+            Console.WriteLine("|=================================================|");
+            escolha = Console.ReadKey();
+
+            switch (escolha.Key)
+            {
+                case ConsoleKey.F2:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("CLIENTES:");
+                        Console.WriteLine("\n[F8] para cadastro de novos clientes:");
+                        Console.WriteLine("1º passo: Digitar o CPF que deseja cadastrar, somente números;\n2º passo: Digitar o nome da pessoa correspondente ao CPF que deseja cadastrar;");
+                        Console.WriteLine("3º passo: Digitar o número de telefone, com DDD, somente números;\n4º passo: Digitar o endereço completo\n5º passo: Digitar o endereço de e - mail;");
+                        Console.WriteLine("Em seguida aparecerá a opção de cadastrar novo cliente, através das teclas (s) para sim e (n) para não.\n\nCaso sua escolha seja:\n(s)sim, o programa retorna ao Cadastro de clientes, basta seguir o mesmo passo a passo para cadastrar novo cliente.");
+                        Console.WriteLine("(n)não, o programa retorna ao menu principal.\nObs: Importante ressaltar que somente o CPF é um dado obrigatório.");
+                        Console.WriteLine("\n[F9] Consulta de clientes:\nDigite o CPF que deseja consultar, caso o CPF esteja cadastrado irá aparecer na tela o cadastro completo do usuário.");
+                        Console.WriteLine("Se não estiver cadastrado, o programa direciona o usuário para o menu de cadastro de cliente.");
+                        Console.WriteLine("\n[F10] Exclusão de clientes:\nInforme o CPF do cliente que deseja excluir, em seguida o cliente sairá da base de dados.");
+                        Console.ReadKey();
+                        MenuPrincipal();
+                    }
+                    break;
+                case ConsoleKey.F3:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("PRODUTOS:\n\n[F8] PARA CONSULTAR O ESTOQUE ATUAL:");
+                        Console.WriteLine("[F1] para acessar pães;\n[F2] para acessar confeitos;\n[F3] para acessar bebidas;\n[Esc] para voltar ao menu de produtos.\n\n[F9] PARA EDITAR PRODUTOS EXISTENTES CADASTRADOS ANTERIORMENTE:");
+                        Console.WriteLine("[F1] para acessar pães;\n[F2] para acessar confeitos;\n[F3] para acessar bebidas;\n[Esc] para voltar ao menu de produtos;\n\n[F12] PARA SAIR DO SISTEMA.");
+                        Console.WriteLine("\nAo escolher a opção correspondente abrirá outro Menu de acordo com cada tecla, conforme descrição abaixo: ");
+                        Console.WriteLine("\n[F8] CONSULTA DE ESTOQUE:\n1º passo: Digitar o tipo de produto que deseja consultar;\n2º passo: Digitar o código do produto que deseja consultar;\nEm seguida aparecerá o produto, a descrição, a quantidade em estoque e o valor unitário.");
+                        Console.WriteLine("\n[F9] EDITAR PRODUTOS:\n1º passo: Digitar a categoria de produtos que deseja alterar;\n2º passo: Digitar o código do produto que deseja alterar;\n3º passo: Digitar o que você deseja alterar:\n\n      [D]descrição\n      [E]estoque\n      [P]Preço\n");
+                        Console.WriteLine("\nCaso escolha [D] Descrição: ");
+                        Console.WriteLine("Exibirá na tela a descrição atual do produto, em seguida informe a alteração que deseja realizar. Ao terminar de digitar, pressione a tecla “enter”, exibirá na tela a mensagem de “Descrição alterada” e a nova descrição abaixo.\n");
+                        Console.WriteLine("Caso escolha [E] Estoque:\nExibirá na tela o estoque atual do produto, em seguida informe a alteração que deseja realizar. Ao terminar de digitar, pressione a tecla “enter”, exibirá na tela a mensagem de “Estoque alterado” e o novo estoque abaixo.\n\nCaso escolha [P] preço: ");
+                        Console.WriteLine("Exibirá na tela o preço atual do produto, em seguida informe a alteração que deseja realizar. Ao terminar de digitar, pressione a tecla “enter”, exibirá na tela a mensagem de “Preço alterado” e o novo preço abaixo.");
+                        Console.WriteLine("Em seguida aparecerá o produto, a descrição, a quantidade em estoque e o valor unitário.");
+                        Console.ReadKey();
+                        MenuPrincipal();
+                        break;
+                    }
+                case ConsoleKey.F4:
+                    {
+                        Console.Clear();
+                        Console.WriteLine("VENDAS:\n\n[F8] para venda de produtos;\n[F9] para relatório de vendas");
+                        Console.WriteLine("\nAo escolher a opção correspondente abrirá outro Menu de acordo com cada tecla, conforme descrição abaixo:\n[F8] VENDA DE PRODUTOS:\n\n1º passo: Digite o CPF do cliente.");
+                        Console.WriteLine("\nCaso o CPF esteja cadastrado, exibirá os dados do cliente cadastrado e em seguida escolha a opção(s) sim para iniciar a venda ou (n)não para voltar ao menu anterior.");
+                        Console.WriteLine("Se o CPF não estiver cadastrado, aparecerá a opção de cadastrar novo cliente, através das teclas(s) para sim e(n) para não.\nCaso a escolha seja(s) sim, o programa retorna ao Cadastro de clientes, basta seguir o passo a passo para cadastrar novo cliente.");
+                        Console.WriteLine("Se a escolha for (n) não, o programa retorna ao menu principal.\n\n2º passo: Ao iniciar uma venda através da tecla(s), será exibida a seleção de produtos disponíveis divididas em:\n      Categorias;\n      ID;\n      Estoque;\n      Preço;\n      Descrição.");
+                        Console.WriteLine("\n3º passo: Para iniciar a venda é necessário informar o ID do produto;\n\n4º passo: Digite a quantidade do produto.");
+                        Console.WriteLine("Caso a quantidade escolhida seja menor ou igual à quantidade disponível em estoque o programa exibe a opção de continuar a venda incluindo novos produtos através das teclas (s)para sim ou(n) para não.");
+                        Console.WriteLine("Caso a quantidade escolhida seja superior à quantidade disponível em estoque, o programa exibe na tela a mensagem “PRODUTO NÃO INCLUÍDO NA VENDA”;\nEm seguida exibe a opção de continuar a incluir novos produtos para a mesma venda através da tecla (s)para sim ou(n) para não.");
+                        Console.WriteLine("O usuário tem a possibilidade de executar quantas vendas forem necessárias respeitando a quantidade disponível em estoque.\n\n5º passo: Caso opte por encerrar a venda através da tecla(n) não, o programa direciona o usuário para o resumo da venda contendo:");
+                        Console.WriteLine("\n      Número da venda\n      ID do produto;\n      Quantidade;\n      Preço unitário;\n      Preço Total;\n      Nome do produto;\n      Valor total da compra;\n6º passo: Informe o valor recebido, em seguida exibe na tela o troco se houver.");
+                        Console.WriteLine("\n7º passo: Caso tenha interesse em imprimir o comprovante, basta escolher a opção (s)para sim ou(n) para não.\nCaso escolha(s) para sim, o relatório de vendas é exibido.\nCaso escolha(n) para não, o programa retorna ao menu de vendas.\nPara voltar ao menu de vendas.");
+                        Console.WriteLine("\n[F9] RELATÓRIO DE VENDAS:\nDeseja visualizar o relatório detalhado de uma venda?\nCaso escolha(s) para sim, exibe resumo da venda selecionada; \nCaso escolha(n) para não, retorna menu principal.");
+                        Console.ReadKey();
+                        MenuPrincipal();
+                        break;
+                    }
+                case ConsoleKey.Escape:
+                    {
+                        MenuPrincipal();
+                        break;
+                    }
+                default:
+                    {
+                        MostrarOpçãoInválida();
+                        MenuPrincipal();
+                        break;
+                    }
+            }
+        }
+
+        public void submenu1_Clientes()
+
+        {
+            TituloSistema();
+            TituloPadaria();
+            Console.WriteLine("|                       CLIENTES                  |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|             [F8]  CADASTRO DE CLIENTES          |");
+            Console.WriteLine("|             [F9]  CONSULTA DE CLIENTES          |");
+            Console.WriteLine("|             [F10] EXCLUSÃO DE CLIENTES          |");
+            Console.WriteLine("|             [ESC] VOLTAR AO MENU                |");
+            Console.WriteLine("|=================================================|");
+            ConsoleKeyInfo Lertecla;
+            Lertecla = Console.ReadKey();
+            switch (Lertecla.Key)
+            {
+                case ConsoleKey.F8:
+                    {
+                        CadastroClientes();
+                        break;
+                    }
+                case ConsoleKey.F9:
+                    {
+                        ConsultaClientes();
+                        break;
+                    }
+                case ConsoleKey.F10:
+                    {
+                        ExclusaoCliente();
+                        break;
+                    }
+                case ConsoleKey.Escape:
+                    {
+                        MenuPrincipal();
+                        break;
+                    }
+                default:
+                    {
+                        MostrarOpçãoInválida();
+                        submenu1_Clientes();
+                        break;
+                    }
+            }
+        }
+
+        public void submenu2_Produtos()
+        {
+            TituloSistema();
+            TituloPadaria();
+            Console.WriteLine("|                    PRODUTOS                     |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+            Console.WriteLine("|             [F8] CONSULTA DE ESTOQUE            |");
+            Console.WriteLine("|             [F9] EDITAR PRODUTO                 |");
+            Console.WriteLine("|             [ESC] VOLTAR AO MENU                |");
+            Console.WriteLine("|=================================================|");
+            ConsoleKeyInfo Lertecla;
+            Lertecla = Console.ReadKey();
+            switch (Lertecla.Key)
+            {
+                case ConsoleKey.F8:
+                    {
+                        Consulta_Estoque();
+                        break;
+                    }
+                case ConsoleKey.F9:
+                    {
+                        EditarProdutos();
+                        break;
+                    }
+                case ConsoleKey.Escape:
+                    {
+                        MenuPrincipal();
+                        break;
+                    }
+                default:
+                    {
+                        MostrarOpçãoInválida();
+                        submenu2_Produtos();
+                        break;
+                    }
+            }
+        }
+
+        public void submenu3_Vendas()
+        {
+            MostrarTituloVendas();
+            Console.WriteLine("|             [F8] VENDAS DE PRODUTOS             |");
+            Console.WriteLine("|             [F9] RELATÓRIO DE VENDAS            |");
+            Console.WriteLine("|             [ESC] VOLTAR AO MENU                |");
+            Console.WriteLine("|=================================================|");
+            ConsoleKeyInfo Lertecla;
+            Lertecla = Console.ReadKey();
+            switch (Lertecla.Key)
+            {
+                case ConsoleKey.F8:
+                    {
+                        Vendas();
+                        break;
+                    }
+                case ConsoleKey.F9:
+                    {
+                        RelatoriodeVendas();
+                        break;
+                    }
+                case ConsoleKey.Escape:
+                    {
+                        MenuPrincipal();
+                        break;
+                    }
+                default:
+                    {
+                        MostrarOpçãoInválida();
+                        submenu3_Vendas();
+                        break;
+                    }
+            }
+        }
+
+        public void Vendas()
+        {
+            MostrarTituloVendas();
+            string cpfCliente;
+            Console.Write("Digite o CPF do cliente (somente números): ");//Modificar para pesquisa por nome ou telefone!!!!
+            cpfCliente = Console.ReadLine();
+            cpfCliente = FormatarCPF(cpfCliente);//Sistema faz o tratamento para formatar o CPF com máscara que contém pontos e hífen, uma vez que o banco salva a informação com a máscara.
+            bool verificacaoCPFcadastrado = VerificarCPFCadastradoCliente(cpfCliente);//Sistema verifica se o CPF está cadastrado e retorna verdadeiro ou falso.
+            if (verificacaoCPFcadastrado == false)//Se CPF não estiver cadastrado, sistema exibe mensagem e questiona se usuário deseja cadastrar cliente.
+            {
+                MostrarTituloVendas();
+                Console.WriteLine("CPF {0} não cadastrado.\n", cpfCliente);
+                Console.WriteLine("Deseja cadastrar o cliente? [s] ou [n]");//Caso usuário deseje cadastrar cliente, sistema direciona para a tela de Cadastro de Usuário. Caso contrário, volta para menu principal de Vendas.
+                ConsoleKeyInfo opcaoCadastrarCliente = Console.ReadKey();
+                if (opcaoCadastrarCliente.Key.Equals(ConsoleKey.S))
+                {
+                    CadastroClientes();
+                }
+                else
+                {
+                    submenu3_Vendas();
+                }
+            }
+            if (verificacaoCPFcadastrado == true)//Se CPF estiver cadastrado, sistema exibe dados do cliente e usuário opta por iniciar ou não a venda.
+            {
+                MostrarTituloVendas();//Sistema abre a tela de início de venda.
+                ApresentarDadosCliente(cpfCliente);//Sistema exibe dados do CPF cadatrado e localizado.
+                Console.WriteLine("\nDeseja iniciar a venda para este cliente? [s] ou [n]");//Sistema questiona se usuário deseja iniciar a venda.
+                ConsoleKeyInfo opcaoIniciarVenda = Console.ReadKey();
+                if (opcaoIniciarVenda.Key.Equals(ConsoleKey.N))//Caso usuário não inicie a venda, sistema retorna para o menu principal de Vendas.
+                {
+                    submenu3_Vendas();
+                }
+                int codCategoria, codProduto; //Se usuário não cancela início da venda, sistema cria e inicia variáveis necessárias apresentação, seleção e inclusão de produtos nas vendas, antes de iniciar loop.
+                double qtdeProduto, qtdeTotalProdutos = 0, precoTotalVenda = 0;
+                ConsoleKeyInfo opcaoIncluirProdutos;
+                do//Sistema inicia loop para usuário incluir produtos na venda que foi iniciada e registra dados da venda no banco.
+                {
+                    MostrarTituloVendas();//Sistema abre a tela de início de venda.
+                    ApresentarDadosCliente(cpfCliente);//Sistema exibe dados do CPF cadatrado e localizado.
+                    bancodedadosVendas[indiceSalvarItemVenda, 0] = Convert.ToString(idVendas);//Sistema salva ID da Venda e CPF no banco de dados de Vendas. O ID de Vendas é uma variável estática, iniciada em 1 e iterada após cada loop de inclusão de produto.
+                    bancodedadosVendas[indiceSalvarItemVenda, 1] = cpfCliente;
+                    Console.WriteLine("\nNúmero da venda: {0}", idVendas);//Sistema exibe o número da venda iniciada.
+                    ListarProdutos();//Sistema exibe a lista de produtos cadastrados, com seus respectivos dados.
+                    Console.Write("\n\nDigite o ID do produto desejado para venda: ");//Sistema solicita e grava o código do produto a ser vendido, que é informado pelo usuário.
+                    string idProduto = Console.ReadLine();
+                    codCategoria = IdentificarIndiceCategoria(idProduto);//Sistema identifica o índice da categoria e do produto, de acordo com o código de produto informado.
+                    codProduto = IdentificarIndiceProduto(idProduto);
+                    Console.Write("Digite a quantidade do produto: ");//Sistema solicita a quantidade de produto a ser vendida, usuário informa e sistema salva o valor.
+                    qtdeProduto = Convert.ToDouble(Console.ReadLine());
+                    if (Convert.ToDouble(bancodedadosProdutos[codCategoria, codProduto, 3]) < qtdeProduto)//Sistema verifica se a quantidade em estoque é menor que a quantidade desejada para venda. Em caso afirmativo, sistema notifica o cliente, impede a inclusão do produto e segue para questionar se o usuário deseja incluir outros produtos à venda.
+                    {
+                        Console.WriteLine("\n----------------------------------------------------------------------------------");
+                        Console.WriteLine("PRODUTO NÃO INCLUÍDO NA VENDA!");
+                        Console.WriteLine("A quantidade de produtos informada não pode ser maior que a quantidade em estoque.");
+                        Console.WriteLine("----------------------------------------------------------------------------------");
+                        System.Threading.Thread.Sleep(2500);
+                    }
+                    else//Caso a quantidade desejada para venda seja menor ou igual à quantidade em estoque, sistema calcula dados e grava informações da venda no banco de dados de Vendas.
+                    {
+                        RetirarProdutosEstoque(codCategoria, codProduto, qtdeProduto);//Sistema reduz o estoque do produto, na quantidade informada pelo usuário.   
+                        bancodedadosVendas[indiceSalvarItemVenda, 2] = (bancodedadosProdutos[codCategoria, codProduto, 0]);//Sistema busca ID, Nome e Preço Unitário do produto selecionado no banco de dados de produtos e salva no banco de dados de Vendas. Ambos são do tipo string, então não há necessidade de fazer conversões.
+                        bancodedadosVendas[indiceSalvarItemVenda, 3] = (bancodedadosProdutos[codCategoria, codProduto, 1]);
+                        bancodedadosVendas[indiceSalvarItemVenda, 4] = (bancodedadosProdutos[codCategoria, codProduto, 4]);
+                        double precoUnitario = Convert.ToDouble(bancodedadosProdutos[codCategoria, codProduto, 4]);//Sistema converte Preço Unitário do produto selecionado de string para double, com o objetivo de realizar cálculos.
+                        double precoTotalItem = precoUnitario * qtdeProduto;//Sistema calcula o preço de cada item de venda, muliplicando preço unitário e quantidade.
+                        precoTotalVenda += precoTotalItem;//A cada vez que novos itens são incluídos, o sistema acumula o valor de cada item de venda no preço total da venda, para depois obter o valor total de cada venda.
+                        bancodedadosVendas[indiceSalvarItemVenda, 5] = Convert.ToString(qtdeProduto);//Sistema converte quantidade de produto e preço de cada item de venda respectivamente de inteiro e double para string e salva no banco de dados de Vendas.
+                        bancodedadosVendas[indiceSalvarItemVenda, 6] = precoTotalItem.ToString("C");
+                        qtdeTotalProdutos += qtdeProduto; //Sistema acumula a quantidade de produtos a cada novo item incluído na venda, para identificar o total de produtos vendidos em cada venda.
+                        indiceSalvarItemVenda++;//Sistema altera o valor do índice (linha) onde serão salvos os dados do próximo item incluído no banco de dados de Vendas.
+                    }
+                    Console.WriteLine("\n\n------------------------------------------------------------");//Sistema questiona se usuário deseja incluir mais itens, ainda na mesma venda e usuário responde.
+                    Console.WriteLine("Deseja continuar a incluir produtos? [s] ou [n].");//Se o usuário não desejar incluir mais itens na venda, a mesma será concluída, apresentando resumo e dados de pagamento.
+                    opcaoIncluirProdutos = Console.ReadKey();
+                } while (opcaoIncluirProdutos.Key.Equals(ConsoleKey.S));//Caso usuário informe que deseja incluir mais itens na mesma venda, sistema reinicia este loop.
+                MostrarTituloVendas();//Sistema abre a tela de início de venda.
+                ApresentarDadosCliente(cpfCliente);//Sistema exibe dados do CPF cadatrado e localizado.
+                Console.WriteLine("\nNúmero da venda: {0}", idVendas);//Sistema exibe o número da venda concluída.
+                Console.WriteLine("\nRESUMO DA VENDA\n");//Sistema apresenta relatório com dados de todos os itens incluídos na venda.
+                ListarProdutosIncluidos(idVendas);
+                Console.WriteLine("\n\nVALOR TOTAL: {0}", precoTotalVenda.ToString("C"));//Sistema mostra o valor total acumulado da venda.
+                Console.WriteLine("------------------------------------------------------------");
+                double totalRecebido, troco;//Sistema cria variáveis para receber total recebido e calcular troco.
+                Console.Write("\nInforme o total recebido: R$ ");//Sistema solicita o total recebido e converte para double, a fim de realizar cálculos.
+                totalRecebido = Convert.ToDouble(Console.ReadLine());
+                troco = totalRecebido - precoTotalVenda;//Sistema calcula o troco, subtraindo o total recebido do valor total da venda.
+                if (troco == 0)//Sistema verifica o valor do troco e informa ao usuário se não há troco ou qual o valor a ser devolvido.
+                {
+                    Console.WriteLine("\nNão há troco.");
+                }
+                else
+                {
+                    Console.WriteLine("\nTroco: {0}.", troco.ToString("C"));
+                }
+                Console.WriteLine("------------------------------------------------------------");
+                Console.WriteLine("\nDeseja imprimir comprovante? [s] ou [n].");//Sistema questiona se usuário deseja imprimir comprovante e recebe a informação.
+                ConsoleKeyInfo opcaoImprimirComprovante = Console.ReadKey();
+                if (opcaoImprimirComprovante.Key.Equals(ConsoleKey.S))//Se o usuário desejar imprimir o comprovante, sistema insere dados de identificação do estabelecimento, produtos vendidos e totais de pagamento.
+                {
+                    TituloSistema();
+                    TituloPadaria();
+                    Console.WriteLine("\n\n");
+                    ApresentarDadosCliente(cpfCliente);
+                    Console.WriteLine("\n----------------------------------------------------------------------------");
+                    Console.WriteLine("Número da venda: {0}", idVendas);
+                    Console.WriteLine("----------------------------------------------------------------------------");
+                    Console.WriteLine("\nCOMPROVANTE DE COMPRA\n");
+                    ListarProdutosIncluidos(idVendas);
+                    Console.WriteLine("\n----------------------------------------------------------------------------");
+                    Console.WriteLine("Valor total: {0}", precoTotalVenda.ToString("C"));
+                    Console.WriteLine("Valor recebido: {0}", totalRecebido.ToString("C"));
+                    Console.WriteLine("Troco: {0}", troco.ToString("C"));
+                    Console.WriteLine("----------------------------------------------------------------------------");
+                    Console.WriteLine("Obrigada pela preferência!");
+                    Console.ReadKey();
+                }
+                bancodedadosRelatorioVendas[indiceVendas, 0] = Convert.ToString(idVendas);//Sistema salvo dados de totalizadores da venda no banco de dados de relatório de vendas.
+                bancodedadosRelatorioVendas[indiceVendas, 1] = cpfCliente;
+                bancodedadosRelatorioVendas[indiceVendas, 2] = Convert.ToString(qtdeTotalProdutos);
+                bancodedadosRelatorioVendas[indiceVendas, 3] = precoTotalVenda.ToString();
+                idVendas++;//Sistema itera o ID de Vendas e o Índice de Vendas para iniciar uma nova venda. Depois retorna ao menu principal de Vendas
+                indiceVendas++;
+                submenu3_Vendas();
+            }
+        }
+
+        public void RelatoriodeVendas()
+        {
+            ExibirRelatorioVendas();
+            Console.WriteLine("\n\n\nDeseja visualizar o relatório detalhado de uma venda? [s] ou [n].");
+            ConsoleKeyInfo opcaoDetalharRelatorioVenda = Console.ReadKey();
+            if (opcaoDetalharRelatorioVenda.Key.Equals(ConsoleKey.S))//Caso usuário deseje visualizar os detalhes de uma venda, sistema limpa tela, reescreve a lista de vendas e solicita código da venda que usuário deseja detalhar.
+            {
+                ExibirRelatorioVendas();
+                Console.Write("\n\n\nDigite o código da venda para detalhamento: ");
+                int codVenDetalhamento = Convert.ToInt32(Console.ReadLine());
+                Console.Clear();//Sistema recebe o código da venda que deve ser detalhada e exibe dados do resumo de venda, depois retorna ao menu principal de vendas.
+                Console.WriteLine("DETALHAMENTO DE VENDA");
+                Console.WriteLine("\nNúmero da venda: {0}\n", codVenDetalhamento);
+                ListarProdutosIncluidos(codVenDetalhamento);
+                Console.ReadKey();
+                submenu3_Vendas();
+            }
+            else
+            {
+                submenu3_Vendas();
+            }
+        }
+
+        public void MostrarTituloVendas()
+        {
+            TituloSistema();
+            TituloPadaria();
+            Console.WriteLine("|                      VENDAS                     |");
+            Console.WriteLine("|                                                 |");
+            Console.WriteLine("|=================================================|");
+        }//Finalizado.
+
+        public string FormatarCPF(string pCPF)
+        {
+            pCPF = pCPF.Insert(3, ".");//Sistema faz o tratamento para formatar o CPF com máscara que contém pontos e hífen, uma vez que o banco salva a informação com a máscara.
+            pCPF = pCPF.Insert(7, ".");
+            pCPF = pCPF.Insert(11, "-");
+            return pCPF;
+        }//Finalizado.
+
+        public void ListarProdutos()
+        {
+            Console.WriteLine("\n\nSELEÇÃO DE PRODUTOS");
+            int indiceCategoria = 0, indiceProduto = 0;
+            do
+            {
+                if (indiceCategoria == 0)
+                {
+                    Console.WriteLine(" \nCATEGORIA PÃES");
+                }
+                if (indiceCategoria == 1)
+                {
+                    Console.WriteLine(" \nCATEGORIA CONFEITOS");
+                }
+                if (indiceCategoria == 2)
+                {
+                    Console.WriteLine(" \nCATEGORIA BEBIDAS");
+                }
+                Console.WriteLine(" | ID | Estoque |  Preço   |  Nome");
+                Console.WriteLine("------------------------------------------------------------");
+                do//Sistema começa o loop com inclusão de dados de cada produto da categoria que está rodando. Todas as categorias possuem cinco produtos, portanto sempre itera o índice de produto de 0 a 4.
+                {
+                    Console.Write(" | " + bancodedadosProdutos[indiceCategoria, indiceProduto, 0]);//Sistema busca Id do Produto e Quantidade em Estoque no banco de produtos e insere na tela.
+                    int estoqueAtual = Convert.ToInt32(bancodedadosProdutos[indiceCategoria, indiceProduto, 3]);
+                    Console.Write(" |   " + estoqueAtual.ToString("0#"));
+                    if (bancodedadosProdutos[indiceCategoria, indiceProduto, 4].Length == 4)//Sistema insere o preço do produto na tela e corrige a quantidade de espaços para alinhar os textos, de acordo com quantidade de caracteres do preço do produto e o espaço disponível.
+                    {
+                        double preco = Convert.ToDouble(bancodedadosProdutos[indiceCategoria, indiceProduto, 4]);
+                        Console.Write("    | " + preco.ToString("C") + " ");
+                    }
+                    else
+                    {
+                        double preco = Convert.ToDouble(bancodedadosProdutos[indiceCategoria, indiceProduto, 4]);
+                        Console.Write("    | " + preco.ToString("C"));
+                    }
+                    Console.Write(" | " + bancodedadosProdutos[indiceCategoria, indiceProduto, 1] + "\n");
+                    indiceProduto++;
+                } while (indiceProduto <= 4);
+                Console.WriteLine("------------------------------------------------------------");
+                indiceCategoria++;
+                indiceProduto = 0;
+            } while (indiceCategoria < 3);
+        }//Finalizado.
+
+        public int IdentificarIndiceCategoria(string pIDproduto)
+        {
+            int codProduto = Convert.ToInt32(pIDproduto);
+            int codCategoria = 0;
+            if (codProduto >= 1 && codProduto <= 5)
+            {
+                codCategoria = 0;
+            }
+            if (codProduto >= 6 && codProduto <= 10)
+            {
+                codCategoria = 1;
+            }
+            if (codProduto >= 11 && codProduto <= 15)
+            {
+                codCategoria = 2;
+            }
+            return codCategoria;
+        }//Finalizado.
+
+        public int IdentificarIndiceProduto(string pIDproduto)
+        {
+            int codProduto = Convert.ToInt32(pIDproduto);
+            if (codProduto >= 1 && codProduto <= 5)
+            {
+                codProduto -= 1;
+            }
+            if (codProduto >= 6 && codProduto <= 10)
+            {
+                codProduto -= 6;
+            }
+            if (codProduto >= 11 && codProduto <= 15)
+            {
+                codProduto -= 11;
+            }
+            return codProduto;
+        }//Finalizado.
+
+        public void ListarProdutosIncluidos(int idVendas)
+        {
+            Console.WriteLine(" | ID | Qtde | Preço Un. | Preço Total  |  Nome");
+            Console.WriteLine("----------------------------------------------------------------------------");
+            int indicePesquisarItemVenda = 0;
+            do
+            {
+                if (bancodedadosVendas[indicePesquisarItemVenda, 0] == Convert.ToString(idVendas))
+                {
+                    Console.Write(" | " + bancodedadosVendas[indicePesquisarItemVenda, 2]);
+                    Console.Write(" |  " + bancodedadosVendas[indicePesquisarItemVenda, 5]);
+                    if (bancodedadosVendas[indicePesquisarItemVenda, 5].Length <= 2)
+                    {
+                        int qtdeEspaco = 2 - bancodedadosVendas[indicePesquisarItemVenda, 5].Length;
+                        AcrescentarEspacos(qtdeEspaco);
+                    }
+                    Console.Write(" | R$ " + bancodedadosVendas[indicePesquisarItemVenda, 4]);
+                    if (bancodedadosVendas[indicePesquisarItemVenda, 4].Length <= 5)
+                    {
+                        int qtdeEspaco = 5 - bancodedadosVendas[indicePesquisarItemVenda, 4].Length;
+                        AcrescentarEspacos(qtdeEspaco);
+                    }
+                    Console.Write(" | " + bancodedadosVendas[indicePesquisarItemVenda, 6]);
+                    if (bancodedadosVendas[indicePesquisarItemVenda, 6].Length <= 11)
+                    {
+                        int qtdeEspaco = 11 - bancodedadosVendas[indicePesquisarItemVenda, 6].Length;
+                        AcrescentarEspacos(qtdeEspaco);
+                    }
+                    Console.Write(" | " + bancodedadosVendas[indicePesquisarItemVenda, 3] + "\n");
+                }
+                indicePesquisarItemVenda++;
+            } while (bancodedadosVendas[indicePesquisarItemVenda, 0] != null);
+        }//Finalizado.
+
+        public void AcrescentarEspacos(int pQTDEspaco)
+        {
+            do
+            {
+                Console.Write(" ");
+                pQTDEspaco--;
+            } while (pQTDEspaco >= 0);
+        }//Finalizado.
+
+        public void ApresentarDadosCliente(string pCPFcliente)
+        {
+            int indiceCPF = 0;
+            do
+            {
+                if (pCPFcliente == bancodedadosClientes[indiceCPF, 0])
+                {
+                    Console.WriteLine("Dados do cliente:");
+                    Console.WriteLine("CPF: {0} \nNome: {1} \nTelefone: {2} \nEndereço: {3} \ne-mail: {4}", bancodedadosClientes[indiceCPF, 0], bancodedadosClientes[indiceCPF, 1], bancodedadosClientes[indiceCPF, 2], bancodedadosClientes[indiceCPF, 3], bancodedadosClientes[indiceCPF, 4]);
+                    indiceCPF++;
+                }
+                else
+                {
+                    indiceCPF++;
+                }
+            } while (indiceCPF < 10);
+        }//Finalizado.
+
+        public void RetirarProdutosEstoque(int codCategoria, int codProduto, double qtdeProduto)
+        {
+            double estoqueAtual = Convert.ToDouble(bancodedadosProdutos[codCategoria, codProduto, 3]);
+            double alteracaoEstoque = estoqueAtual -= qtdeProduto;
+            Convert.ToString(alteracaoEstoque);
+            bancodedadosProdutos[codCategoria, codProduto, 3] = alteracaoEstoque.ToString("0#");
+        }//Finalizado.
+
+        public void ExibirRelatorioVendas()
+        {
+            Console.Clear();
+            Console.WriteLine("RELATÓRIO DE VENDAS\n");
+            Console.WriteLine(" |  ID   |      ID        | Qtde. | Valor");
+            Console.WriteLine(" | Venda |    Cliente     | Prod. | Total");
+            Console.WriteLine("----------------------------------------------------------------------------");
+            int qtdeProdutos = 0, qtdeTotalProdutos = 0, indicePesquisarVenda = 0;
+            double valorTotalVendas = 0, precoTotalVenda = 0;
+            do
+            {
+                if (bancodedadosRelatorioVendas[indicePesquisarVenda, 0].Length <= 4)
+                {
+                    Console.Write(" | " + bancodedadosRelatorioVendas[indicePesquisarVenda, 0]);
+                    int qtdeEspaco = 4 - bancodedadosRelatorioVendas[indicePesquisarVenda, 0].Length;
+                    AcrescentarEspacos(qtdeEspaco);
+                }
+                Console.Write(" | " + bancodedadosRelatorioVendas[indicePesquisarVenda, 1]);
+                if (bancodedadosRelatorioVendas[indicePesquisarVenda, 2].Length <= 4)
+                {
+                    qtdeProdutos = Convert.ToInt32(bancodedadosRelatorioVendas[indicePesquisarVenda, 2]);
+                    qtdeTotalProdutos += qtdeProdutos;
+                    Console.Write(" | " + bancodedadosRelatorioVendas[indicePesquisarVenda, 2]);
+                    int qtdeEspaco = 4 - bancodedadosRelatorioVendas[indicePesquisarVenda, 2].Length;
+                    AcrescentarEspacos(qtdeEspaco);
+                }
+                precoTotalVenda = Convert.ToDouble(bancodedadosRelatorioVendas[indicePesquisarVenda, 3]);
+                Console.Write(" | " + precoTotalVenda.ToString("C") + "\n");
+                valorTotalVendas += precoTotalVenda;
+                indicePesquisarVenda++;
+            } while (bancodedadosRelatorioVendas[indicePesquisarVenda, 0] != null);            
+            Console.WriteLine("----------------------------------------------------------------------------");
+            Console.Write(" |         TOTAL         ");
+            Console.Write(" | {0}", qtdeTotalProdutos);
+            if (qtdeTotalProdutos >= 100 && qtdeTotalProdutos <= 999)
+            {
+                int qtdeEspaco = 1;
+                AcrescentarEspacos(qtdeEspaco);
+            }
+            if (qtdeTotalProdutos >= 10 && qtdeTotalProdutos <= 99)
+            {
+                int qtdeEspaco = 2;
+                AcrescentarEspacos(qtdeEspaco);
+            }
+            if (qtdeTotalProdutos <= 9)
+            {
+                int qtdeEspaco = 3;
+                AcrescentarEspacos(qtdeEspaco);
+            }
+            Console.Write(" | {0}", valorTotalVendas.ToString("C"));//Sistema apresenta um totalizador de valor total de cada venda.
+        }//Finalizado.
+
+        public bool VerificarCPFCadastradoCliente(string pCPFCliente)
+        {
+            bool cpfCadastrado = false;
+            int n = 0;
+            Program Padaria = new Program();
+            do
+            {
+                if (pCPFCliente == bancodedadosClientes[n, 0])
+                {
+                    cpfCadastrado = true;
+                    n++;
+                }
+                else
+                {
+                    n++;
+                }
+            } while (n < 10 && cpfCadastrado != true);
+
+            return cpfCadastrado;
+        }//Finalizado.
+
+        public void CadastroClientes()
+        {
+            ConsoleKeyInfo simounao;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------");
+                bancodedadosClientes[numerodeclientes, 0] = MetodoparareceberoCPF();
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------\nCPF: {0}", bancodedadosClientes[numerodeclientes, 0]);
+                bancodedadosClientes[numerodeclientes, 1] = Nome();
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------\nCPF: {0} \nNome: {1}", bancodedadosClientes[numerodeclientes, 0], bancodedadosClientes[numerodeclientes, 1]);
+                bancodedadosClientes[numerodeclientes, 2] = Tel();
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------\nCPF: {0} \nNome: {1} \nTelefone: {2}", bancodedadosClientes[numerodeclientes, 0], bancodedadosClientes[numerodeclientes, 1], bancodedadosClientes[numerodeclientes, 2]);
+                bancodedadosClientes[numerodeclientes, 3] = Ender();
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------\nCPF: {0} \nNome: {1} \nTelefone: {2} \nEndereço: {3}", bancodedadosClientes[numerodeclientes, 0], bancodedadosClientes[numerodeclientes, 1], bancodedadosClientes[numerodeclientes, 2], bancodedadosClientes[numerodeclientes, 3]);
+                bancodedadosClientes[numerodeclientes, 4] = Email();
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------\nCPF: {0} \nNome: {1} \nTelefone: {2} \nEndereço: {3} \ne-mail: {4}", bancodedadosClientes[numerodeclientes, 0], bancodedadosClientes[numerodeclientes, 1], bancodedadosClientes[numerodeclientes, 2], bancodedadosClientes[numerodeclientes, 3], bancodedadosClientes[numerodeclientes, 4]);
+                Console.WriteLine("\nCadastro realizado com sucesso!");
+                Console.WriteLine("---------------------------------");
+                System.Threading.Thread.Sleep(1000);
+                numerodeclientes++;
+                Console.WriteLine("\n\nDeseja cadastrar outro cliente? [s] ou [n]");
+                simounao = Console.ReadKey();
+            } while (simounao.Key.Equals(ConsoleKey.S) && numerodeclientes < 10);
+            if (numerodeclientes >= 10)
+            {
+                Console.Clear();
+                Console.WriteLine("Você não pode cadastrar mais clientes!");
+                System.Threading.Thread.Sleep(2000);
+            }
+            MenuPrincipal();
+        }//Finalizado.
+
+        public string MetodoparareceberoCPF()
+        {
+            string stringdoCPF;
+            bool num = true, verificaCPF;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("------- CADASTRO DE CLIENTES -------");
+                Console.Write("Digite o CPF (somente números): ");
+                stringdoCPF = Console.ReadLine();
+                stringdoCPF = FormatarCPF(stringdoCPF);
+                verificaCPF = VerificarCPFCadastradoCliente(stringdoCPF);
+                if (verificaCPF == true)
+                {
+                    Console.WriteLine("CPF já cadastrado!");
+                    System.Threading.Thread.Sleep(2000);
+                    submenu1_Clientes();
+                }
+                else
+                {
+                    num = Valida(stringdoCPF);
+                    if (num != true)
+                    {
+                        Console.WriteLine("\n\n-------------------------------");
+                        Console.WriteLine("CPF inválido, tente novamente!");
+                        System.Threading.Thread.Sleep(2000);
+                    }
+                }
+            } while (num != true);
+            return stringdoCPF;
+        }//Recebimento de CPF do Cliente. Finalizado.
+
+        public bool Valida(string cpf)
+        {
+            int[] multiplicador1 = new int[9] { 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+            int[] multiplicador2 = new int[10] { 11, 10, 9, 8, 7, 6, 5, 4, 3, 2 };
+            string tempCpf;
+            string digito;
+            int soma;
+            int resto;
+            cpf = cpf.Trim();
+            cpf = cpf.Replace(".", "").Replace("-", "");
+            if (cpf.Length != 11)
+            {
+                return false;
+            }
+            tempCpf = cpf.Substring(0, 9);
+            soma = 0;
+            for (int i = 0; i < 9; i++)
+                soma += int.Parse(tempCpf[i].ToString()) * multiplicador1[i];
+            resto = soma % 11;
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+            digito = resto.ToString();
+            tempCpf = tempCpf + digito;
+            soma = 0;
+            for (int i = 0; i < 10; i++)
+                soma += int.Parse(tempCpf[i].ToString()) * multiplicador2[i];
+            resto = soma % 11;
+            if (resto < 2)
+                resto = 0;
+            else
+                resto = 11 - resto;
+            digito = digito + resto.ToString();
+            return cpf.EndsWith(digito);
+        }//Validação de CPF. Finalizado.
+
+        public string Nome()
+        {
+            Console.Write("Digite seu nome: ");
+            string nome = Console.ReadLine();
+            return nome;
+        }//Recebimento de Nome do Cliente. Finalizado.
+
+        public string Tel()
+        {
+            string tel;
+            bool tst = true;
+            do
+            {
+                Console.Write("Digite seu número de telefone, com DDD: ");
+                tel = Console.ReadLine();
+                if (tel.Length == 10)
+                {
+                    tel = tel.Insert(0, "(");
+                    tel = tel.Insert(3, ") ");
+                    tel = tel.Insert(9, "-");
+                    tst = true;
+                }
+                else if (tel.Length == 11)
+                {
+                    tel = tel.Insert(0, "(");
+                    tel = tel.Insert(3, ") ");
+                    tel = tel.Insert(10, "-");
+                    tst = true;
+                }
+                else
+                {
+                    Console.Clear();
+                    Console.WriteLine("Número de telefone inválido!");
+                    Console.WriteLine("Tente novamente");
+                }
+            } while (tst != true);
+            return tel;
+        }//Recebimento de Telefone do Cliente. Finalizado.
+
+        public string Ender()
+        {
+            Console.Write("Digite seu endereço: ");
+            string ender = Console.ReadLine();
+            return ender;
+        }//Recebimento de Endereço do Cliente. Finalizado.
+
+        public string Email()
+        {
+            string email;
+            Console.Write("Digite seu endereço de e-mail: ");
+            string auxmail = Console.ReadLine();
+            email = auxmail.ToLower();
+            return email;
+        }//Recebimento de Email do Cliente. Finalizado.
+
+        public void ConsultaClientes()
+        {
+            Console.Clear();
+            int variaveldepesquisa = 0;
+            string variavelparatestarCPF;
+            Console.WriteLine("\tCONSULTA DE CLIENTES");
+            Console.Write("Digite o CPF do cliente: ");
+            variavelparatestarCPF = Console.ReadLine();
+            if (variavelparatestarCPF.Length != 11)
+            {
+                Console.WriteLine("CPF digitado incorretamente, tente novamente!");
+                System.Threading.Thread.Sleep(2000);
+                ConsultaClientes();
+            }
+            else
+            {
+                variavelparatestarCPF = FormatarCPF(variavelparatestarCPF);
+                do
+                {
+                    if (variavelparatestarCPF == bancodedadosClientes[variaveldepesquisa, 0])
+                    {
+                        Console.Clear();
+                        Console.WriteLine("\tCONSULTA DE CLIENTES");
+                        Console.WriteLine("CPF: {0} \nNome: {1} \nTelefone: {2} \nEndereço: {3} \nE-mail: {4}", bancodedadosClientes[variaveldepesquisa, 0], bancodedadosClientes[variaveldepesquisa, 1], bancodedadosClientes[variaveldepesquisa, 2], bancodedadosClientes[variaveldepesquisa, 3], bancodedadosClientes[variaveldepesquisa, 4]);
+                        Console.ReadKey();
+                        submenu1_Clientes();
+                    }
+                    else
+                    {
+                        variaveldepesquisa++;
+                    }
+                } while (variaveldepesquisa < 10);
+                if (variaveldepesquisa >= 10)
+                {
+                    ConsoleKeyInfo simounao;
+                    System.Threading.Thread.Sleep(1500);
+                    Console.WriteLine("\n\n-------------------------------------------------------------------");
+                    Console.WriteLine("Cliente não cadastrado, deseja realizar o cadastro? [s] ou [n].");
+                    simounao = Console.ReadKey();
+                    if (simounao.Key.Equals(ConsoleKey.S))
+                    {
+                        CadastroClientes();
+                    }
+                    else
+                    {
+                        submenu1_Clientes();
+                    }
+                }
+            }
+            //Verificação de existência do cliente; Finalizado;
+        }//Finalizado.
+
+        public void ExclusaoCliente()
+        {
+            int variaveldepesquisa = 0;
+            string variavelparatestarCPF;
+            ConsoleKeyInfo simounao;
+            Console.Clear();
+            Console.WriteLine("EXCLUSÃO DE CLIENTES");
+            Console.Write("Digite o CPF do cliente a ser excluído: ");
+            variavelparatestarCPF = Console.ReadLine();
+            variavelparatestarCPF = FormatarCPF(variavelparatestarCPF);
+            do
+            {
+                if (variavelparatestarCPF == bancodedadosClientes[variaveldepesquisa, 0])
+                {
+                    Console.WriteLine("\nCPF: {0} \nNome: {1} \nTelefone: {2} \nEndereço: {3} \ne-mail: {4}", bancodedadosClientes[variaveldepesquisa, 0], bancodedadosClientes[variaveldepesquisa, 1], bancodedadosClientes[variaveldepesquisa, 2], bancodedadosClientes[variaveldepesquisa, 3], bancodedadosClientes[variaveldepesquisa, 4]);
+                    System.Threading.Thread.Sleep(1500);
+                    Console.WriteLine("\n\n------------------------------------------------");
+                    Console.WriteLine("Confirma a exclusão deste cliente? [s] ou [n]");
+                    simounao = Console.ReadKey();
+                    Console.Clear();
+                    if (simounao.Key.Equals(ConsoleKey.S))
+                    {
+                        bancodedadosClientes[variaveldepesquisa, 0] = "";
+                        bancodedadosClientes[variaveldepesquisa, 1] = "";
+                        bancodedadosClientes[variaveldepesquisa, 2] = "";
+                        bancodedadosClientes[variaveldepesquisa, 3] = "";
+                        bancodedadosClientes[variaveldepesquisa, 4] = "";
+                        Console.WriteLine("Cliente excluído com sucesso!");
+                        System.Threading.Thread.Sleep(2000);
+                        submenu1_Clientes();
+                    }
+                    else
+                    {
+                        submenu1_Clientes();
+                    }
+                }
+                else
+                {
+                    variaveldepesquisa++;
+                }
+            } while (variaveldepesquisa < 10);
+            if (variaveldepesquisa >= 10)
+            {
+                Console.WriteLine("Cliente não encontrado!");
+                System.Threading.Thread.Sleep(2000);
+                submenu1_Clientes();
+            }
+        }//Finalizado.
+
+        public void Consulta_Estoque()
+        {
+            Program Padaria = new Program();
+            string codigo;
+            int n = 0;
+            bool saida = false;
+            ConsoleKeyInfo lercodigo;
+            do
+            {
+                Console.Clear();
+                Console.WriteLine("CONTROLE DE ESTOQUE DE PRODUTOS");
+                Console.WriteLine("\nDigite o tipo de produto: ");
+                Console.WriteLine("[F1] Pães [F2] Confeitos [F3] Bebidas [ESC} Voltar ao Menu de Produtos");
+                lercodigo = Console.ReadKey();
+                if (lercodigo.Key != ConsoleKey.F1 && lercodigo.Key != ConsoleKey.F2 && lercodigo.Key != ConsoleKey.F3 && lercodigo.Key != ConsoleKey.Escape)//Acrecentei o ESC para voltar ao menu;
+                {
+                    Console.WriteLine("\nTente novamente!");
+                    System.Threading.Thread.Sleep(2000);//Console.ReadKey(); modificação para não ser necessário teclar para continuar;
+                    Console.Clear();
+                }
+            } while (lercodigo.Key != ConsoleKey.F1 && lercodigo.Key != ConsoleKey.F2 && lercodigo.Key != ConsoleKey.F3 && lercodigo.Key != ConsoleKey.Escape);
+            switch (lercodigo.Key)
+            {
+                case ConsoleKey.F1:
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine(" [01] para Pão Francês\n [02] para Bisnaguinha de Sal\n [03] para Pão Doce\n [04] para Marta Rocha\n [05] para Pão de Queijo");
+                        Console.Write("\nDigite o código do produto: ");
+                        codigo = Console.ReadLine();
+                        if (codigo != "01" && codigo != "02" && codigo != "03" && codigo != "04" && codigo != "05")
+                        {
+                            Console.WriteLine("\nTente novamente!");
+                            System.Threading.Thread.Sleep(2000);//Console.ReadKey(); modificação para não ser necessário teclar para continuar;
+                            Console.Clear();
+                        }
+                    } while (codigo != "01" && codigo != "02" && codigo != "03" && codigo != "04" && codigo != "05");
+                    do
+                    {
+                        if (codigo == bancodedadosProdutos[0, n, 0])
+                        {
+                            Console.WriteLine("\nProduto: " + bancodedadosProdutos[0, n, 1]);
+                            Console.WriteLine("Descrição: " + bancodedadosProdutos[0, n, 2]);
+                            Console.WriteLine("Temos {0} em estoque, saindo a R$ {1} cada um.", bancodedadosProdutos[0, n, 3], bancodedadosProdutos[0, n, 4]);
+                            Console.ReadKey();
+                            saida = true;
+                        }
+                        else
+                        {
+                            n++;
+                        }
+                    } while (n < 5 && saida != true);
+                    break;
+                case ConsoleKey.F2:
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine(" [06] para Bolo de Aniversário\n [07] para Floresta Negra (Fatia)\n [08] para Bolo de Floresta Negra\n [09] para Chocolate com Morango (Fatias)\n [10] para Bolo de Chocolate com Morangos");
+                        Console.Write("\nDigite o código do produto: ");
+                        codigo = Console.ReadLine();
+                        if (codigo != "06" && codigo != "07" && codigo != "08" && codigo != "09" && codigo != "10")
+                        {
+                            Console.WriteLine("\nTente novamente!");
+                            System.Threading.Thread.Sleep(2000);//Console.ReadKey(); modificação para não ser necessário teclar para continuar;
+                            Console.Clear();
+                        }
+                    } while (codigo != "06" && codigo != "07" && codigo != "08" && codigo != "09" && codigo != "10");
+                    do
+                    {
+                        if (codigo == bancodedadosProdutos[1, n, 0])
+                        {
+                            Console.WriteLine("\nProduto: " + bancodedadosProdutos[1, n, 1]);
+                            Console.WriteLine("Descrição: " + bancodedadosProdutos[1, n, 2]);
+                            Console.WriteLine("Temos {0} em estoque, saindo a R$ {1} cada um.", bancodedadosProdutos[1, n, 3], bancodedadosProdutos[1, n, 4]);
+                            Console.ReadKey();
+                            saida = true;
+                        }
+                        else
+                        {
+                            n++;
+                        }
+                    } while (n < 5 && saida != true);
+                    break;
+                case ConsoleKey.F3:
+                    do
+                    {
+                        Console.Clear();
+                        Console.WriteLine(" [11] para Café\n [12] para Suco de Laranja\n [13] para Sucos Diversos\n [14] para Refrigerantes lata\n [15] para Cerveja lata");
+                        Console.Write("\n\n\n\nDigite o código do produto: ");
+                        codigo = Console.ReadLine();
+                        if (codigo != "11" && codigo != "12" && codigo != "13" && codigo != "14" && codigo != "15")
+                        {
+                            Console.WriteLine("\nTente novamente!");
+                            System.Threading.Thread.Sleep(2000);//Console.ReadKey(); modificação para não ser necessário teclar para continuar;
+                            Console.Clear();
+                        }
+                    } while (codigo != "11" && codigo != "12" && codigo != "13" && codigo != "14" && codigo != "15");
+                    do
+                    {
+                        if (codigo == bancodedadosProdutos[2, n, 0])
+                        {
+                            Console.WriteLine("\nProduto: " + bancodedadosProdutos[2, n, 1]);
+                            Console.WriteLine("Descrição: " + bancodedadosProdutos[2, n, 2]);
+                            Console.WriteLine("Temos {0} em estoque, saindo a R$ {1} cada um.", bancodedadosProdutos[2, n, 3], bancodedadosProdutos[2, n, 4]);
+                            Console.ReadKey();
+                            saida = true;
+                        }
+                        else
+                        {
+                            n++;
+                        }
+                    } while (n < 5 && saida != true);
+                    break;
+                case ConsoleKey.Escape:
+                    {
+                        submenu2_Produtos();
+                        break;
+                    }
+            }
+            Padaria.Consulta_Estoque();
+        }//Finalizado.
+
+        public void MenuAtributosProdutos()
+        {
+            Console.WriteLine("|=================================|");
+            Console.WriteLine("|           [D] Descrição         |");
+            Console.WriteLine("|           [E] Estoque           |");
+            Console.WriteLine("|           [P] Preço             |");
+            Console.WriteLine("| [Esc] Voltar ao menu de edição  |");
+            Console.WriteLine("|=================================|");
+        }//Finalizado.
+
+        public void EditarProdutos()
+        {
+            Console.Clear();
+            Console.WriteLine("\t\t|=========================|");
+            Console.WriteLine("\t\t|      Editar produtos    |");
+            Console.WriteLine("\t\t|=========================|");
+            Console.WriteLine("\t\t|   [F1] Pães             |");
+            Console.WriteLine("\t\t|   [F2] Confeitos        |");
+            Console.WriteLine("\t\t|   [F3] Bebidas          |");
+            Console.WriteLine("\t\t|   [Esc] Voltar ao Menu  |");
+            Console.WriteLine("\t\t|=========================|");
+            Console.WriteLine("\nDigite o código referente à categoria de produtos que deseja alterar: ");
+            ConsoleKeyInfo Lertecla;
+            do
+            {
+                Lertecla = Console.ReadKey();
+                switch (Lertecla.Key)
+                {
+                    case ConsoleKey.F1:
+                        {
+                            Console.Clear();
+                            int ProdutosPães;
+                            Console.WriteLine("\t\t|====================|");
+                            Console.WriteLine("\t\t|        Pães        |");
+                            Console.WriteLine("\t\t|====================|");
+                            Console.WriteLine(" [0] para Pão Francês\n [1] para Bisnaguinha de Sal\n [2] para Pão Doce\n [3] para Marta Rocha\n [4] para Pão de Queijo\n [ESC] Voltar");
+                            Console.Write("\nDigite o código do produto: ");
+                            ProdutosPães = Convert.ToInt32(Console.ReadLine());
+                            if (ProdutosPães == 0 || ProdutosPães == 1 || ProdutosPães == 2 || ProdutosPães == 3 || ProdutosPães == 4)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("{0}", bancodedadosProdutos[0, ProdutosPães, 1]);
+                                MenuAtributosProdutos();
+                                Console.Write("\n\nDigite o código do atributo que deseja alterar: ");
+                                Lertecla = Console.ReadKey();
+                                switch (Lertecla.Key)
+                                {
+                                    case ConsoleKey.D:
+                                        {
+                                            Console.WriteLine("\n\nDescrição atual: {0}", bancodedadosProdutos[0, 0, 2]);
+                                            Console.Write("Digite nova descrição: ");
+                                            bancodedadosProdutos[0, ProdutosPães, 2] = Console.ReadLine();
+                                            Console.WriteLine("\n Descricão alterada com sucesso! \n Nova descricão: {0}", bancodedadosProdutos[0, ProdutosPães, 2]);
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.E:
+                                        {
+                                            int alteracaoProduto;
+                                            int qtdeAtual = Convert.ToInt32(bancodedadosProdutos[0, 0, 3]);
+                                            Console.WriteLine("\n\nQuantidade atual: {0}", qtdeAtual.ToString("0#"));
+                                            do
+                                            {
+                                                Console.Write("Digite nova quantidade: ");
+                                                alteracaoProduto = Convert.ToInt32(Console.ReadLine());
+                                                if (alteracaoProduto >= 0)
+                                                {
+                                                    bancodedadosProdutos[0, ProdutosPães, 3] = alteracaoProduto.ToString();
+                                                    Console.WriteLine("\n Estoque alterado com sucesso! \n Novo estoque: {0}", alteracaoProduto.ToString("0#"));
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("O estoque não foi alterado, pois a quantidade informada não pode ser inferior a ZERO.");
+                                                }
+                                            } while (alteracaoProduto < 0);
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.P:
+                                        {
+                                            double precoAtual = Convert.ToDouble(bancodedadosProdutos[0, 0, 4]);
+                                            Console.WriteLine("\n\nPreço atual: {0}", precoAtual.ToString("C"));
+                                            Console.Write("Digite novo preço: ");
+                                            double novoPreco = Convert.ToDouble(Console.ReadLine());
+                                            if (novoPreco <= 0)
+                                            {
+                                                Console.WriteLine("O preço do produto não pode ser menor ou igual a zero!");
+                                                System.Threading.Thread.Sleep(2000);
+                                                EditarProdutos();
+                                            }
+                                            else
+                                            {
+                                                bancodedadosProdutos[0, ProdutosPães, 4] = novoPreco.ToString("N2");
+                                                Console.WriteLine("\n Preço alterado com sucesso! \n Novo preço {0}", novoPreco.ToString("C"));
+                                            }
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.Escape:
+                                        {
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            Console.Clear();
+                                            MostrarOpçãoInválida();
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                }
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                MostrarOpçãoInválida();
+                                EditarProdutos();
+                            }
+                            break;
+                        }
+                    case ConsoleKey.F2:
+                        {
+                            Console.Clear();
+                            Console.WriteLine("\t\t|====================|");
+                            Console.WriteLine("\t\t|       Confeitos    |");
+                            Console.WriteLine("\t\t|====================|");
+                            Console.WriteLine(" [0] para Bolo de Aniversário\n [1] para Floresta Negra (Fatia)\n [2] para Bolo de Floresta Negra\n [3] para Chocolate com Morango (Fatias)\n [4] para Bolo de Chocolate com Morangos\n [ESC] Voltar");
+                            int Produtosconfeitos;
+                            Console.Write("\nDigite o código do produto: ");
+                            Produtosconfeitos = Convert.ToInt32(Console.ReadLine());
+                            if (Produtosconfeitos == 0 || Produtosconfeitos == 1 || Produtosconfeitos == 2 || Produtosconfeitos == 3 || Produtosconfeitos == 4)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("{0}", bancodedadosProdutos[1, Produtosconfeitos, 1]);
+                                MenuAtributosProdutos();
+                                Console.Write("\n\nDigite o código do atributo que deseja alterar: ");
+                                Lertecla = Console.ReadKey();
+                                switch (Lertecla.Key)
+                                {
+                                    case ConsoleKey.D:
+                                        {
+                                            Console.WriteLine("\n\nDescrição atual: {0}", bancodedadosProdutos[1, 0, 2]);
+                                            Console.Write("Digite nova descrição: ");
+                                            bancodedadosProdutos[1, Produtosconfeitos, 2] = Console.ReadLine();
+                                            Console.WriteLine("\n Descricão alterada com sucesso! \n Nova descricão: {0}", bancodedadosProdutos[1, Produtosconfeitos, 2]);
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.E:
+                                        {
+                                            int qtdeAtual = Convert.ToInt32(bancodedadosProdutos[1, Produtosconfeitos, 3]);
+                                            Console.WriteLine("\n\nQuantidade atual: {0}", qtdeAtual.ToString("0#"));
+                                            int alteracaoProduto;
+                                            do
+                                            {
+                                                Console.Write("Digite nova quantidade: ");
+                                                alteracaoProduto = Convert.ToInt32(Console.ReadLine());
+                                                if (alteracaoProduto >= 0)
+                                                {
+                                                    bancodedadosProdutos[1, Produtosconfeitos, 3] = alteracaoProduto.ToString();
+                                                    Console.WriteLine("\n Estoque alterado com sucesso! \n Novo estoque: {0}", alteracaoProduto.ToString("0#"));
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("O estoque não foi alterado, pois a quantidade informada não pode ser inferior a ZERO.");
+                                                }
+                                            } while (alteracaoProduto < 0);
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.P:
+                                        {
+                                            double precoAtual = Convert.ToDouble(bancodedadosProdutos[1, 0, 4]);
+                                            Console.WriteLine("\n\nPreço atual: {0}", precoAtual.ToString("C"));
+                                            Console.Write("Digite novo preço: ");
+                                            double novoPreco = Convert.ToDouble(Console.ReadLine());
+                                            if (novoPreco <= 0)
+                                            {
+                                                Console.WriteLine("O preço do produto não pode ser menor ou igual a zero!");
+                                                System.Threading.Thread.Sleep(2000);
+                                                EditarProdutos();
+                                            }
+                                            else
+                                            {
+                                                bancodedadosProdutos[1, Produtosconfeitos, 4] = novoPreco.ToString("N2");
+                                                Console.WriteLine("\n Preço alterado com sucesso! \n Novo preço {0}", novoPreco.ToString("C"));
+                                            }
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.Escape:
+                                        {
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            MostrarOpçãoInválida();
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                }
+                            }
+                            else
+                            {
+                                MostrarOpçãoInválida();
+                                EditarProdutos();
+                            }
+                            break;
+                        }
+                    case ConsoleKey.F3:
+                        {
+                            Console.Clear();
+                            Console.WriteLine("\t\t|====================|");
+                            Console.WriteLine("\t\t|        Bebidas     |");
+                            Console.WriteLine("\t\t|====================|");
+                            Console.WriteLine(" [0] para Café\n [1] para Suco de Laranja\n [2] para Sucos Diversos\n [3] para Refrigerantes lata\n [4] para Cerveja lata\n [ESC] Voltar");
+                            int ProdutosBebidas;
+                            Console.Write("\nDigite o código do produto: ");
+                            ProdutosBebidas = Convert.ToInt32(Console.ReadLine());
+                            if (ProdutosBebidas == 0 || ProdutosBebidas == 1 || ProdutosBebidas == 2 || ProdutosBebidas == 3 || ProdutosBebidas == 4)
+                            {
+                                Console.Clear();
+                                Console.WriteLine("{0}", bancodedadosProdutos[2, ProdutosBebidas, 1]);
+                                MenuAtributosProdutos();
+                                Console.Write("\n\nDigite o código do atributo que deseja alterar: ");
+                                Lertecla = Console.ReadKey();
+                                switch (Lertecla.Key)
+                                {
+                                    case ConsoleKey.D:
+                                        {
+                                            Console.WriteLine("\n\nDescrição atual: {0}", bancodedadosProdutos[2, 0, 2]);
+                                            Console.Write("Digite nova descrição: ");
+                                            bancodedadosProdutos[2, ProdutosBebidas, 2] = Console.ReadLine();
+                                            Console.WriteLine("\n Descricão alterada com sucesso! \n Nova descricão: {0}", bancodedadosProdutos[2, ProdutosBebidas, 2]);
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.E:
+                                        {
+                                            int qtdeAtual = Convert.ToInt32(bancodedadosProdutos[2, ProdutosBebidas, 3]);
+                                            Console.WriteLine("\n\nQuantidade atual: {0}", qtdeAtual.ToString("0#"));
+                                            int alteracaoProduto;
+                                            do
+                                            {
+                                                Console.Write("Digite novo estoque: ");
+                                                alteracaoProduto = Convert.ToInt32(Console.ReadLine());
+                                                if (alteracaoProduto >= 0)
+                                                {
+                                                    bancodedadosProdutos[2, ProdutosBebidas, 3] = alteracaoProduto.ToString();
+                                                    Console.WriteLine("\n Estoque alterado com sucesso! \n Novo estoque: {0}", alteracaoProduto.ToString("0#"));
+                                                }
+                                                else
+                                                {
+                                                    Console.WriteLine("O estoque não foi alterado, pois a quantidade informada não pode ser inferior a ZERO.");
+                                                }
+                                            } while (alteracaoProduto < 0);
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.P:
+                                        {
+                                            double precoAtual = Convert.ToDouble(bancodedadosProdutos[2, 0, 4]);
+                                            Console.WriteLine("\n\nPreço atual: {0}", precoAtual.ToString("C"));
+                                            Console.Write("Digite novo preço: ");
+                                            double novoPreco = Convert.ToDouble(Console.ReadLine());
+                                            if (novoPreco <= 0)
+                                            {
+                                                Console.WriteLine("O preço do produto não pode ser menor ou igual a zero!");
+                                                System.Threading.Thread.Sleep(2000);
+                                                EditarProdutos();
+                                            }
+                                            else
+                                            {
+                                                bancodedadosProdutos[2, ProdutosBebidas, 4] = novoPreco.ToString("N2");
+                                                Console.WriteLine("\n Preço alterado com sucesso! \n Novo preço {0}", novoPreco.ToString("C"));
+                                            }
+                                            System.Threading.Thread.Sleep(2000);
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.Escape:
+                                        {
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                    case ConsoleKey.F12:
+                                        {
+                                            Finalizacao();
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            MostrarOpçãoInválida();
+                                            EditarProdutos();
+                                            break;
+                                        }
+                                }
+                            }
+                            else
+                            {
+                                MostrarOpçãoInválida();
+                                EditarProdutos();
+                            }
+                            break;
+                        }
+                    case ConsoleKey.Escape:
+                        {
+                            submenu2_Produtos();
+                            break;
+                        }
+                    case ConsoleKey.F12:
+                        {
+                            Finalizacao();
+                            break;
+                        }
+                    default:
+                        {
+                            MostrarOpçãoInválida();
+                            EditarProdutos();
+                            break;
+                        }
+                }
+            } while (Lertecla.Key != ConsoleKey.F12);
+        }//Finalizado.
+
+        public void Finalizacao()
+        {
+            Console.Clear();
+            Console.WriteLine("\tPrograma Finalizado!");
+            Console.WriteLine("\tTenha um Bom Dia!");
+            Console.WriteLine("\t© Copyright 2017 Empresa Desenvolvedora. Todos os direitos reservados.");
+            System.Threading.Thread.Sleep(3000);
+            System.Environment.Exit(0);
+        }//Finalizado.
+
+        public void ClientesCadastrados()
+        {
+            /*CPF*/
+            bancodedadosClientes[0, 0] = "029.889.656-76";
+            /*Nome*/
+            bancodedadosClientes[0, 1] = "Kleber Lucas de Souza";
+            /*Telefone*/
+            bancodedadosClientes[0, 2] = "(31) 99106-7281";
+            /*Endereço*/
+            bancodedadosClientes[0, 3] = "rua Rio Grande do Sul, n. 697, sala 1203 - bairro Barro Preto, Belo Horizonte - MG";
+            /*e-mail*/
+            bancodedadosClientes[0, 4] = "71700013@aluno.faculdadecotemig.br";
+
+            bancodedadosClientes[1, 0] = "125.716.126-11";
+            bancodedadosClientes[1, 1] = "Vinicius Christian";
+            bancodedadosClientes[1, 2] = "(31) 98514-9973";
+            bancodedadosClientes[1, 3] = "rua Ferroviário Oromar Ribeiro, n. 890 - bairro Boa Vista, Belo Horizonte - MG";
+            bancodedadosClientes[1, 4] = "71700790@aluno.faculdadecotemig.br";
+
+            bancodedadosClientes[2, 0] = "090.557.906-21";
+            bancodedadosClientes[2, 1] = "Eustáquio Quintão";
+            bancodedadosClientes[2, 2] = "(31) 98746-0474";
+            bancodedadosClientes[2, 3] = "rua Niquelina, n. - bairro Santa Efigêni, Belo Horizonte - MG";
+            bancodedadosClientes[2, 4] = "71700145@aluno.faculdadecotemig.br";
+
+            bancodedadosClientes[3, 0] = "124.155.446-39";
+            bancodedadosClientes[3, 1] = "Mariana de Oliveira";
+            bancodedadosClientes[3, 2] = "(31) 97527-9430";
+            bancodedadosClientes[3, 3] = "rua Julio de Carvalho, n. 347 - bairro Braunas, Belo Horizonte - MG";
+            bancodedadosClientes[3, 4] = "71700404@aluno.faculdadecotemig.br";
+
+            bancodedadosClientes[4, 0] = "879.195.086-49";
+            bancodedadosClientes[4, 1] = "Maria Conceição Bretas Vilarino";
+            bancodedadosClientes[4, 2] = "(31) 99904-4525";
+            bancodedadosClientes[4, 3] = "rua dos Guaranis, n. 564, ap. 401 - bairro Centro, Belo Horizonte - MG";
+            bancodedadosClientes[4, 4] = "71700307@aluno.faculdadecotemig.br";
+        }//Criação dos 5 primeiros clientes. Finalizado.
+
+        public string[,,] ProdutosCadastrados()
+        {
+
+            /*Código*/
+            bancodedadosProdutos[0, 0, 0] = "01";
+            /*Nome*/
+            bancodedadosProdutos[0, 0, 1] = "Pão Francês";
+            /*Descrição*/
+            bancodedadosProdutos[0, 0, 2] = "Pão de sal tradicional, 50g.";
+            /*Quantidade em estoque*/
+            bancodedadosProdutos[0, 0, 3] = "50";
+            /*Preço*/
+            bancodedadosProdutos[0, 0, 4] = "0,75";
+
+            bancodedadosProdutos[0, 1, 0] = "02";
+            bancodedadosProdutos[0, 1, 1] = "Bisnaguinha de Sal";
+            bancodedadosProdutos[0, 1, 2] = "Bisnaga de 100g.";
+            bancodedadosProdutos[0, 1, 3] = "50";
+            bancodedadosProdutos[0, 1, 4] = "1,50";
+
+            bancodedadosProdutos[0, 2, 0] = "03";
+            bancodedadosProdutos[0, 2, 1] = "Pão Doce";
+            bancodedadosProdutos[0, 2, 2] = "Pão de hamburger.";
+            bancodedadosProdutos[0, 2, 3] = "50";
+            bancodedadosProdutos[0, 2, 4] = "2,00";
+
+            bancodedadosProdutos[0, 3, 0] = "04";
+            bancodedadosProdutos[0, 3, 1] = "Marta Rocha";
+            bancodedadosProdutos[0, 3, 2] = "Pão doce recheado com creme de ovos.";
+            bancodedadosProdutos[0, 3, 3] = "50";
+            bancodedadosProdutos[0, 3, 4] = "3,00";
+
+            bancodedadosProdutos[0, 4, 0] = "05";
+            bancodedadosProdutos[0, 4, 1] = "Pão de Queijo";
+            bancodedadosProdutos[0, 4, 2] = "Pão de queijo mineiro.";
+            bancodedadosProdutos[0, 4, 3] = "50";
+            bancodedadosProdutos[0, 4, 4] = "1,00";
+
+            bancodedadosProdutos[1, 0, 0] = "06";
+            bancodedadosProdutos[1, 0, 1] = "Bolo de Aniversário";
+            bancodedadosProdutos[1, 0, 2] = "Bolo de aniversário para 20 pessoas, confeitado!";
+            bancodedadosProdutos[1, 0, 3] = "05";
+            bancodedadosProdutos[1, 0, 4] = "70,00";
+
+            bancodedadosProdutos[1, 1, 0] = "07";
+            bancodedadosProdutos[1, 1, 1] = "Floresta Negra - Fatia";
+            bancodedadosProdutos[1, 1, 2] = "Fatia de Bolo Floresta Negra!";
+            bancodedadosProdutos[1, 1, 3] = "08";
+            bancodedadosProdutos[1, 1, 4] = "8,00";
+
+            bancodedadosProdutos[1, 2, 0] = "08";
+            bancodedadosProdutos[1, 2, 1] = "Bolo Floresta Negra";
+            bancodedadosProdutos[1, 2, 2] = "Bolo Floresta Negra inteiro, equilave a 8 fatias!";
+            bancodedadosProdutos[1, 2, 3] = "04";
+            bancodedadosProdutos[1, 2, 4] = "60,00";
+
+            bancodedadosProdutos[1, 3, 0] = "09";
+            bancodedadosProdutos[1, 3, 1] = "Chocolate com Morangos - Fatia";
+            bancodedadosProdutos[1, 3, 2] = "Fatia de Bolo de Chocolate com Morangos!";
+            bancodedadosProdutos[1, 3, 3] = "08";
+            bancodedadosProdutos[1, 3, 4] = "8,00";
+
+            bancodedadosProdutos[1, 4, 0] = "10";
+            bancodedadosProdutos[1, 4, 1] = "Bolo de Chocolate com Morangos";
+            bancodedadosProdutos[1, 4, 2] = "Bolo com recheio de chocolate, cobertura de chocolate trufado e morangos inteiros sobre a cobertura!";
+            bancodedadosProdutos[1, 4, 3] = "04";
+            bancodedadosProdutos[1, 4, 4] = "60,00";
+
+            bancodedadosProdutos[2, 0, 0] = "11";
+            bancodedadosProdutos[2, 0, 1] = "Café";
+            bancodedadosProdutos[2, 0, 2] = "Cafezinho coado na hora!";
+            bancodedadosProdutos[2, 0, 3] = "50";
+            bancodedadosProdutos[2, 0, 4] = "0,80";
+
+            bancodedadosProdutos[2, 1, 0] = "12";
+            bancodedadosProdutos[2, 1, 1] = "Suco de Laranja";
+            bancodedadosProdutos[2, 1, 2] = "Suco de Laranja Natural";
+            bancodedadosProdutos[2, 1, 3] = "50";
+            bancodedadosProdutos[2, 1, 4] = "4,00";
+
+            bancodedadosProdutos[2, 2, 0] = "13";
+            bancodedadosProdutos[2, 2, 1] = "Sucos Diversos";
+            bancodedadosProdutos[2, 2, 2] = "Sucos feitos na hora: Morango, Melancia, Uva e Goiaba";
+            bancodedadosProdutos[2, 2, 3] = "50";
+            bancodedadosProdutos[2, 2, 4] = "6,50";
+
+            bancodedadosProdutos[2, 3, 0] = "14";
+            bancodedadosProdutos[2, 3, 1] = "Refrigerantes - Lata";
+            bancodedadosProdutos[2, 3, 2] = "Coca-Cola, Coca-Cola Zero, Guaraná Antártica, Guaraná Antártica Zero, Sprite e Fanta";
+            bancodedadosProdutos[2, 3, 3] = "50";
+            bancodedadosProdutos[2, 3, 4] = "3,50";
+
+            bancodedadosProdutos[2, 4, 0] = "15";
+            bancodedadosProdutos[2, 4, 1] = "Cervejas - Lata";
+            bancodedadosProdutos[2, 4, 2] = "Skol, Brahma, Heineken, Antártica, Bohemia";
+            bancodedadosProdutos[2, 4, 3] = "50";
+            bancodedadosProdutos[2, 4, 4] = "5,00";
+
+            return bancodedadosProdutos;
+        }//Criação dos 15 produtos já cadastrados. Finalizado.
+
+        public string[,] Admin()
+        {
+            bancodedadosUsuarios[0, 0] = "admin";
+            bancodedadosUsuarios[0, 1] = "senha";
+
+            return bancodedadosUsuarios;
+        }//Cadastrando o administrador na posição bancodedadosUsuarios[0,(0-1)]. Finalizado.
+
+        public void Carregamento()
+        {
+            Random numeroAleatorio = new Random();
+
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("");
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(1000);
+            Console.Clear();
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.WriteLine("                     ╣                    ╣");
+            Console.WriteLine("                     ╣                    ╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                          0% carregado");
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(1500);
+            Console.Clear();
+
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            Console.Write("▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("                 ╣");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Red;
+
+            Console.Write("▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("                 ╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                         {0}% carregado", numeroAleatorio.Next(4, 10));
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(1000);
+            Console.Clear();
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Console.Write("▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("              ╣");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+
+            Console.Write("▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("              ╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                         {0}% carregado", numeroAleatorio.Next(11, 25));
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(10000);
+            Console.Clear();
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("           ╣");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("           ╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                         {0}% carregado", numeroAleatorio.Next(26, 48));
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(1500);
+            Console.Clear();
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("      ╣");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("      ╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                         {0}% carregado", numeroAleatorio.Next(50, 76));
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(1000);
+            Console.Clear();
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(" ╣");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine(" ╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                         {0}% carregado", numeroAleatorio.Next(77, 99));
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(5000);
+            Console.Clear();
+
+            Console.WriteLine("\n\n\n\n\n\n                     ╔════════════════════╗");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("╣");
+            Console.Write("                     ╣");
+            Console.ForegroundColor = ConsoleColor.Green;
+
+            Console.Write("▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓");
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("╣");
+            Console.WriteLine("                     ╚════════════════════╝");
+            Console.WriteLine("                         100% carregado");
+            Console.WriteLine("\n\n\n\n                 AGUARDE ...  INICIANDO O SISTEMA");
+            System.Threading.Thread.Sleep(10000);
+            Console.Clear();
+
+            Console.WriteLine();
+            Console.WriteLine("\n\n\n\n\n\n \t\t\t SISTEMA INICIADO!");
+            Console.WriteLine("\n\n\n\n\n\n \t\t\t SEJA BEM VINDO!");
+            System.Threading.Thread.Sleep(3000);
+            Console.Clear();
+        }//Finalizado.
+
+        static void Main(string[] args)
+        {
+            Program Padaria = new Program();
+            Padaria.ProdutosCadastrados();
+            Padaria.ClientesCadastrados();
+            bancodedadosUsuarios = Padaria.Admin();
+
+            //Padaria.Carregamento();
+            Padaria.MenuLogin();
+            //Padaria.MenuPrincipal();
+        }//Finalizado.
+    }
+}
